@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="행정안전부 외국인주민 현황과 교육기본통계로 본 외국인주민·이주배경 학생 증가 추이(2012~2025)">
+<title>늘어나는 이주배경 인구</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 단일 세로 흐름 — 핵심 수치 → 외국인주민 추이 → 학생 감소 vs 이주배경 증가(대형 복합) → 이주배경 학생 추이 → 학교급별(대형 선) → 정의·계산·출처 → 푸터 */
+:root{
+  --bg:#EEF2F4;
+  --surface:#FFFFFF;
+  --ink:#14222E;
+  --muted:#5A6B78;
+  --line:#CDD6DC;
+  --res:#1F6F8B;
+  --res-soft:#CFE3EA;
+  --stu:#C8553D;
+  --stu-soft:#F2D6CE;
+  --down:#8E9BA6;
+  --el:#C8553D;
+  --mid:#7A5BA6;
+  --hi:#2E8B57;
+  --f-display:"Black Han Sans","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F171D; --surface:#17222A; --ink:#E6EDF1; --muted:#97A7B2; --line:#2C3A44;
+    --res:#5FB3CF; --res-soft:#1E3A46; --stu:#EE8A71; --stu-soft:#4A2A22; --down:#5E6C77;
+    --el:#EE8A71; --mid:#B39BDB; --hi:#6CC596;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F171D; --surface:#17222A; --ink:#E6EDF1; --muted:#97A7B2; --line:#2C3A44;
+  --res:#5FB3CF; --res-soft:#1E3A46; --stu:#EE8A71; --stu-soft:#4A2A22; --down:#5E6C77;
+  --el:#EE8A71; --mid:#B39BDB; --hi:#6CC596;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:28px 0}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:600}
+header h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);line-height:1.15;margin-top:6px}
+header h1 .r{color:var(--res)} header h1 .s{color:var(--stu)}
+ul.bul{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:3px;max-width:76ch}
+ul.bul li::marker{color:var(--muted)}
+ul.bul.sm{font-size:12.5px;color:var(--muted)}
+header ul.bul{margin-top:12px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.stat .k{font-size:13px;font-weight:600}
+.stat .v{font-family:var(--f-display);font-size:clamp(28px,4.6vw,38px);line-height:1.1}
+.stat .v small{font-family:var(--f-body);font-size:15px;font-weight:600;margin-left:2px}
+.stat .d{font-size:13px;color:var(--muted)}
+.stat.res .v{color:var(--res)} .stat.stu .v{color:var(--stu)} .stat.dn .v{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:12px}
+section h2{font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px}
+.chip.res{background:var(--res-soft);color:var(--res)} .chip.stu{background:var(--stu-soft);color:var(--stu)}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 8px 8px;overflow-x:auto}
+.chart svg{display:block;width:100%;min-width:680px;height:auto}
+.chart.big svg{min-width:820px}
+.chart svg text{font-family:var(--f-body)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);padding:2px 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:10px;border-radius:2px;display:inline-block}
+.sw.ln{height:3px;border-radius:2px}
+.tbl-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:620px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+td .c{color:var(--muted);font-family:var(--f-body);font-size:11px;margin-left:3px}
+tr:last-child td{border-bottom:0}
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.def{border-top:3px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.def.res{border-color:var(--res)} .def.stu{border-color:var(--stu)}
+.def b{font-size:14px}
+.calc{font-family:var(--f-num);font-size:12.5px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;white-space:pre;line-height:1.7;margin:0}
+ol.src{margin:0;padding-left:1.4em;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+ol.src a{color:var(--res);word-break:break-all}
+a:focus-visible{outline:2px solid var(--res);outline-offset:2px}
+.site-foot{margin-top:40px;border-top:1px solid var(--line);background:var(--surface);margin-inline:-16px;padding-inline:16px;padding-block:22px 28px}
+.site-foot .in{max-width:1040px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-size:13px;color:var(--muted)}
+.site-foot b{color:var(--ink);font-weight:600}
+.site-foot .mail{font-family:var(--f-num);user-select:all}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">공식 통계로 보는 한국 사회의 변화 · 2012~2025</div>
+    <h1><span class="r">외국인주민</span>과 <span class="s">이주배경 학생</span>은 계속 늘고 있다</h1>
+    <ul class="bul">
+      <li>초·중·고 학생 수: 2012년 672만 명 → 2025년 502만 명 (−25.4%)</li>
+      <li>같은 기간 이주배경 학생 수: 4만 6,954명 → 20만 2,208명 (4.3배)</li>
+      <li>자료: 행정안전부 「지방자치단체 외국인주민 현황」, 교육부·한국교육개발원 「교육기본통계」</li>
+    </ul>
+  </header>
+
+  <div class="stats">
+    <div class="stat res">
+      <div class="k">외국인주민 수 (2024.11.1. 기준, 최신)</div>
+      <div class="v">258만 3,626<small>명</small></div>
+      <div class="d">총인구의 5.0% · 2025년 기준 자료는 미발표</div>
+    </div>
+    <div class="stat stu">
+      <div class="k">이주배경 학생 수 (2025.4.1. 기준)</div>
+      <div class="v">20만 2,208<small>명</small></div>
+      <div class="d">초·중·고 전체 학생의 4.0% · 처음 20만 명 돌파</div>
+    </div>
+    <div class="stat stu">
+      <div class="k">이주배경 학생 증가 배율</div>
+      <div class="v">4.3<small>배</small></div>
+      <div class="d">2012년 4만 6,954명 → 2025년 20만 2,208명</div>
+    </div>
+    <div class="stat dn">
+      <div class="k">초·중·고 학생 수 변화</div>
+      <div class="v">−25.4<small>%</small></div>
+      <div class="d">672만 1,176명 → 501만 5,310명</div>
+    </div>
+  </div>
+
+  <!-- 외국인주민 -->
+  <section>
+    <h2>외국인주민 수 추이 <span class="chip res">행정안전부 · 2012~2025</span></h2>
+    <ul class="bul">
+      <li>2015년 171만 명 → 2024년 258만 명 (11.1. 기준, +51.0%)</li>
+      <li>2020~2021년 코로나19 영향으로 2년 연속 감소</li>
+      <li>2022년부터 반등, 3년 연속 최다 경신 → 2024년 총인구 대비 5.0%</li>
+      <li>2025년(2025.11.1. 기준) 자료: 2026.10.7. 현재 미발표 (예년 10월 말~11월 초 발표)</li>
+    </ul>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--res);opacity:.35;outline:1px dashed var(--res)"></i>2012~2014: 1월 1일 기준(지자체 보고 방식)</span>
+      <span><i class="sw" style="background:var(--res)"></i>2015~2024: 11월 1일 기준(인구총조사 활용 방식)</span>
+      <span><i class="sw" style="border:1px dashed var(--muted)"></i>미발표</span>
+    </div>
+    <div class="chart" id="chart-res" role="img" aria-label="외국인주민 수 2012~2025 막대그래프"></div>
+    <ul class="bul sm">
+      <li>작성 방식 변경: 2015.11.1. 기준부터 통계청 인구총조사에서 외국인주민을 추출 → 2014년 이전과 직접 비교 시 주의</li>
+      <li>2015년 구 방식(1.1. 기준) 값: 1,741,919명(3.4%) / 신 방식(11.1. 기준) 값 1,711,013명을 그래프에 사용</li>
+      <li>2020년: 행안부 최초 발표치 2,146,748명(총인구 51,829,136명 대비 4.1%, 전년 대비 69,864명 감소)</li>
+      <li>2021년 발표의 '전년 대비 21,848명 감소'는 2020년 값이 2,156,417명으로 보정되었을 가능성을 시사 → 보정 공표 문서는 미확인, 그래프는 최초 발표치 사용</li>
+    </ul>
+  </section>
+
+  <!-- 학생은 줄고 -->
+  <section>
+    <h2>학생은 줄고, 이주배경 학생은 늘고 <span class="chip stu">교육기본통계 · 2012~2025</span></h2>
+    <ul class="bul">
+      <li>초·중·고 학생 수: 13년간 170만 5,866명 감소 (−25.4%)</li>
+      <li>이주배경 학생 수: 같은 기간 15만 5,254명 증가 (+330.7%)</li>
+      <li>전체 학생 대비 비율: 0.7% → 4.0% (4.0 ÷ 0.7 = 약 5.7배)</li>
+    </ul>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--down)"></i>초·중·고 전체 학생 수 (왼쪽 축)</span>
+      <span><i class="sw ln" style="background:var(--stu)"></i>이주배경 학생 수 (오른쪽 축)</span>
+    </div>
+    <div class="chart big" id="chart-combo" role="img" aria-label="초중고 학생 수 막대와 이주배경 학생 수 선 복합그래프 2012~2025"></div>
+    <ul class="bul sm">
+      <li>전체 학생 수 = 초등학교 + 중학교 + 고등학교 재적학생(각종학교·유치원 제외)</li>
+      <li>두 축의 단위가 다름 (왼쪽 만 명 단위 0~800만, 오른쪽 0~25만)</li>
+    </ul>
+  </section>
+
+  <!-- 이주배경 학생 추이 -->
+  <section>
+    <h2>이주배경(다문화) 학생 수 추이 <span class="chip stu">교육기본통계 · 매년 4월 1일 기준</span></h2>
+    <ul class="bul">
+      <li>2012년 첫 조사 이후 13년 연속 증가</li>
+      <li>2017년 처음 10만 명 돌파, 2025년 처음 20만 명 돌파</li>
+      <li>참고: 2026년 21만 838명(4.3%)</li>
+      <li>용어: 2025년까지 '다문화학생', 2026년 발표부터 '이주배경학생'</li>
+    </ul>
+    <div class="chart" id="chart-stu" role="img" aria-label="이주배경 학생 수 2012~2025 막대그래프"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>연도</th><th>초·중·고 학생 수</th><th>이주배경 학생 수</th><th>전년 대비 증가</th><th>증가율</th><th>전체 학생 대비</th></tr></thead>
+        <tbody id="stu-table"></tbody>
+      </table>
+    </div>
+    <ul class="bul sm">
+      <li>비율: 청소년정책분석평가센터 통계표(원자료 교육기본통계, 분모 초·중·고+각종학교) 값을 소수 첫째 자리로 반올림</li>
+      <li>2020년 비율 2.8%: 같은 통계표의 2.75% 반올림값 (교육부 보도자료는 학교급별 비율만 제시)</li>
+      <li>초·중·고 학생 수 열은 각종학교 제외 값이라 비율 분모와 약간 다름</li>
+    </ul>
+  </section>
+
+  <!-- 학교급별 -->
+  <section>
+    <h2>학교급별 이주배경 학생 비율 <span class="chip stu">해당 학교급 전체 학생 대비 · 2012~2025</span></h2>
+    <ul class="bul">
+      <li>초등학교: 1.1% → 5.0% (4.5배)</li>
+      <li>중학교: 0.5% → 3.7% (7.4배)</li>
+      <li>고등학교: 0.2% → 2.6% (13배)</li>
+      <li>초등학교 증가세 둔화(2024→2025 +0.3%p), 중·고등학교는 빠르게 상승 → 상급 학교로 이주배경 학생 진학 확대</li>
+    </ul>
+    <div class="legend">
+      <span><i class="sw ln" style="background:var(--el)"></i>초등학교</span>
+      <span><i class="sw ln" style="background:var(--mid)"></i>중학교</span>
+      <span><i class="sw ln" style="background:var(--hi)"></i>고등학교</span>
+      <span>○ 속이 빈 점: 학생 수로 계산한 값</span>
+    </div>
+    <div class="chart big" id="chart-lv" role="img" aria-label="학교급별 이주배경 학생 비율 2012~2025 선그래프"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>연도</th><th>초등학교</th><th>중학교</th><th>고등학교</th></tr></thead>
+        <tbody id="lv-table"></tbody>
+      </table>
+    </div>
+    <ul class="bul sm">
+      <li>2022·2024년: 공식 비율 문서 미확인 → 학교급별 이주배경 학생 수 ÷ 학교급별 전체 학생 수로 계산</li>
+      <li>2022년 중학교 계산값 2.945% → 표기 2.9% (반올림 경계)</li>
+      <li>참고: 2026년 초 5.3%, 중 4.0%, 고 2.9%</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>통계별 정의</h2>
+    <div class="defs">
+      <div class="def res"><b>외국인주민 (행정안전부)</b>
+        <ul class="bul sm">
+          <li>3개월 초과 국내 거주 한국 국적 미보유자</li>
+          <li>+ 한국 국적 취득자(귀화자)</li>
+          <li>+ 외국인주민 자녀(미성년)</li>
+        </ul>
+      </div>
+      <div class="def stu"><b>이주배경(다문화) 학생 (교육부)</b>
+        <ul class="bul sm">
+          <li>국제결혼가정 자녀(국내출생·중도입국)</li>
+          <li>+ 외국인가정 자녀</li>
+          <li>초·중·고(각종학교 포함) 재학생 기준</li>
+        </ul>
+      </div>
+      <div class="def"><b>참고: 다른 집계 (직접 비교 불가)</b>
+        <ul class="bul sm">
+          <li>법무부 체류외국인: 2025.12월 말 278만 명(주민등록인구 대비 약 5.4%)</li>
+          <li>인구주택총조사 외국인: 2025.11.1. 211만 명(4.1%) → 귀화자·외국인주민 자녀 제외</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>계산 과정</h2>
+<pre class="calc">초·중·고 학생 수 = 초 + 중 + 고 (각종학교 제외)
+  2012: 2,951,995 + 1,849,094 + 1,920,087 = 6,721,176
+  2025: 2,345,488 + 1,370,356 + 1,299,466 = 5,015,310
+  변화: 5,015,310 ÷ 6,721,176 = 0.7462 → −25.4%  (감소 1,705,866명)
+이주배경 학생 2012→2025: 202,208 ÷ 46,954 = 4.31배 (+155,254명, +330.7%)
+비율 검산 2020: 147,378 ÷ 5,346,874 = 2.76%  (통계표 2.75%, 분모에 각종학교 포함 차이)
+비율 검산 2025: 202,208 ÷ 5,015,310 = 4.03%  (발표 4.0%)
+외국인주민 2015→2024: 2,583,626 ÷ 1,711,013 = 1.510 → +51.0%
+외국인주민 2020: 2,146,748 ÷ 51,829,136 = 4.14% → 4.1%
+학교급별 2022(계산): 초 111,640÷2,664,278=4.19%  중 39,714÷1,348,428=2.95%  고 16,744÷1,262,348=1.33%
+학교급별 2024(계산): 초 117,459÷2,495,005=4.71%  중 47,910÷1,332,850=3.59%  고 27,673÷1,304,325=2.12%
+학교급별 배율 2012→2025: 초 5.0÷1.1=4.5  중 3.7÷0.5=7.4  고 2.6÷0.2=13</pre>
+  </section>
+
+  <section>
+    <h2>출처</h2>
+    <ol class="src">
+      <li>작성 방식 변경(2015.11.1. 기준부터 인구총조사 활용): 행정안전부 통계설명자료 — <a href="https://www.mois.go.kr/pdf/04statistics-description.pdf" target="_blank" rel="noopener">mois.go.kr</a></li>
+      <li>2012년 1,409,577명·2.8%: <a href="https://kidd.co.kr/news/158160" target="_blank" rel="noopener">한국장애인신문</a> / 2013년 1,445,631명·2.8%: <a href="https://www.segye.com/newsView/20130702024888" target="_blank" rel="noopener">세계일보(2013.07.02)</a> / 2014년 156.9만 명·3.1%: <a href="https://m.go.seoul.co.kr/news/2014/07/03/20140703029022" target="_blank" rel="noopener">서울신문(2014.07.03)</a></li>
+      <li>2015년 구 방식 1,741,919명: <a href="https://kyeonggi.com/article/201509210677942" target="_blank" rel="noopener">경기일보</a> / 신 방식 1,711,013명·3.4%: <a href="https://www.khan.co.kr/article/201611141200001" target="_blank" rel="noopener">경향신문(2016.11.14)</a></li>
+      <li>2016년 1,764,664명·3.4%: <a href="https://www.koreatimes.co.kr/www/nation/2017/11/281_239423.html" target="_blank" rel="noopener">Korea Times</a> / 2017년 1,861,084명·3.6%: <a href="https://m.go.seoul.co.kr/news/2018/11/02/20181102014025" target="_blank" rel="noopener">서울신문(2018.11.02)</a> / 2018년 2,054,621명·4.0%: <a href="https://www.segye.com/newsView/20191031509369" target="_blank" rel="noopener">세계일보(2019.10.31)</a></li>
+      <li>2019년 2,216,612명·4.3%, 2020년 2,146,748명·4.1%(총인구 51,829,136명): <a href="https://eiec.kdi.re.kr/policy/materialView.do?num=220162&pp=20" target="_blank" rel="noopener">KDI 경제교육·정보센터(행안부 보도자료 재게시, 2021.11.16)</a>; <a href="https://mobile.newsis.com/view.html?ar_id=NISX20211116_0001652335" target="_blank" rel="noopener">뉴시스(2021.11.16)</a></li>
+      <li>2021년 2,134,569명·4.1%: <a href="https://www.guro.go.kr:443/raonkeditordata/2022/12/20221212_101743926_10471.pdf" target="_blank" rel="noopener">구로구 외국인주민 현황(행안부 자료)</a>; 전년 대비 21,848명 감소: <a href="https://mobile.newsis.com/view/NISX20221031_0002067492" target="_blank" rel="noopener">뉴시스(2022.10.31)</a></li>
+      <li>2022년 2,258,248명·4.4%: 행정안전부 「2022 지방자치단체 외국인주민 현황」 — <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/19/41/2023/CLIKC93525435708625775_attach_4.pdf" target="_blank" rel="noopener">국회도서관 CLIK</a></li>
+      <li>2023년 2,459,542명·4.8%: 행정안전부 「2023 지방자치단체 외국인주민 현황」 — <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/19/41/2024/CLIKC7877502752015211_attach_4.pdf" target="_blank" rel="noopener">국회도서관 CLIK</a></li>
+      <li>2024년 2,583,626명·5.0%: <a href="https://www.khan.co.kr/article/202510301436011/" target="_blank" rel="noopener">경향신문(2025.10.30)</a></li>
+      <li>다문화 학생 수·전체 학생 대비 비율 2012~2024: 청소년정책분석평가센터 청소년통계(원자료 교육기본통계) — <a href="https://www.ypec.re.kr/mps/youthStat/youthPopulation/multiPopulationSchool?menuId=MENU00740" target="_blank" rel="noopener">ypec.re.kr</a></li>
+      <li>학교급별 비율·학생 수 2012~2021, 학교급별 전체 학생 수 2012~2021: 한국교육개발원 「2021 간추린 교육통계」 — <a href="https://kess.kedi.re.kr/publ/fileDownload.do?publItemId=90736&fileSeq=1055685" target="_blank" rel="noopener">KESS 표 Ⅱ-3</a>, <a href="https://kess.kedi.re.kr/publ/fileDownload.do?publItemId=90735&fileSeq=1055684" target="_blank" rel="noopener">KESS 표 Ⅱ-2-1</a></li>
+      <li>학교급별 이주배경 학생 수 2022~2024: <a href="https://kess.kedi.re.kr/publ/fileDownload.do?publItemId=102701&fileSeq=1075620" target="_blank" rel="noopener">KESS 교육통계 자료집</a></li>
+      <li>2022년 학교급별 전체 학생 수, 다문화 168,645명·3.2%: <a href="https://hangyo.com/mobile/article.html?no=97081" target="_blank" rel="noopener">한국교육신문(2022.09.01)</a></li>
+      <li>2023년 학교급별 전체 학생 수: <a href="https://newstomato.com/ReadNews.aspx?no=1199505" target="_blank" rel="noopener">뉴스토마토(2023.08.30)</a> / 학교급별 비율 4.4·3.3·1.7%: <a href="https://mobile.busan.com/view/busan/view.php?code=2024010117525127501" target="_blank" rel="noopener">부산일보</a></li>
+      <li>2024년 학교급별 전체 학생 수, 다문화 193,814명·3.8%: <a href="https://biz.newdaily.co.kr/site/data/html/2024/08/29/2024082900279.html" target="_blank" rel="noopener">뉴데일리(2024.08.29)</a></li>
+      <li>2025년 학교급별 학생 수·비율, 다문화 202,208명·4.0%: <a href="https://eiec.kdi.re.kr/policy/materialView.do?num=270346" target="_blank" rel="noopener">KDI 경제교육·정보센터(KEDI 보도)</a>; <a href="https://kess.kedi.re.kr/eng/post/6861900" target="_blank" rel="noopener">KESS</a>; <a href="https://www.khan.co.kr/article/202508281625001" target="_blank" rel="noopener">경향신문(2025.08.28)</a></li>
+      <li>2026년 참고값(210,838명·4.3%, 학교급별 5.3·4.0·2.9%): <a href="https://www.khan.co.kr/article/202608261516001/" target="_blank" rel="noopener">경향신문(2026.08.26)</a>; <a href="https://eiec.kdi.re.kr/policy/materialView.do?num=285801" target="_blank" rel="noopener">KDI 경제교육·정보센터</a></li>
+      <li>2020년 학교급별 비율 4.0·2.0·0.9%: <a href="https://www.etoday.co.kr/news/view/1934123" target="_blank" rel="noopener">이투데이</a> / 2018년 3.4·1.4·0.7%: <a href="https://m.dailian.co.kr/news/view/735883" target="_blank" rel="noopener">데일리안(2018.08.29)</a> / 2019년 3.8·1.7·0.8%: <a href="http://www.edupress.kr/news/articleView.html?idxno=4177" target="_blank" rel="noopener">에듀프레스(2019.08.29)</a></li>
+      <li>참고 집계: 법무부 「2026년 외국인정책 시행계획(지자체)」 — <a href="https://moj.go.kr/bbs/immigration/226/493572/download.do" target="_blank" rel="noopener">moj.go.kr</a>; 2025 인구주택총조사 — <a href="https://eiec.kdi.re.kr/policy/materialView.do?num=284799" target="_blank" rel="noopener">KDI 경제교육·정보센터</a></li>
+    </ol>
+    <ul class="bul sm">
+      <li>2012~2014년 외국인주민·일부 언론 인용 수치는 1차 보도자료 원문 미대조 → 인용 시 원 통계표 확인 권장</li>
+      <li>2014년 1,569,470명: 출처 페이지에는 '156.9만 명'까지만 표기</li>
+    </ul>
+  </section>
+</div>
+
+<footer class="site-foot">
+  <div class="in">
+    <span><b>© 2026 강원대학교 사범대학 일반사회교육과</b></span>
+    <span class="mail">kdongjin@kangwon.ac.kr</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;return e;}
+  const man=v=>(v/10000).toFixed(1).replace(/\.0$/,'')+'만';
+  const man0=v=>Math.round(v/10000)+'만';
+  const YEARS=[];for(let y=2012;y<=2025;y++)YEARS.push(String(y));
+
+  /* ---------- data ---------- */
+  const RES=[ // [count, pct, basis] basis: 'old'(1.1) | 'new'(11.1) | null(미발표)
+    [1409577,2.8,'old'],[1445631,2.8,'old'],[1569470,3.1,'old'],[1711013,3.4,'new'],[1764664,3.4,'new'],
+    [1861084,3.6,'new'],[2054621,4.0,'new'],[2216612,4.3,'new'],[2146748,4.1,'new'],[2134569,4.1,'new'],
+    [2258248,4.4,'new'],[2459542,4.8,'new'],[2583626,5.0,'new'],[null,null,null]
+  ];
+  const EL=[2951995,2784000,2728509,2714610,2672843,2674227,2711385,2747219,2693716,2672340,2664278,2603929,2495005,2345488];
+  const MI=[1849094,1804189,1717911,1585951,1457490,1381334,1334288,1294559,1315846,1350770,1348428,1326831,1332850,1370356];
+  const HI=[1920087,1893303,1839372,1788266,1752457,1669699,1538576,1411027,1337312,1299965,1262348,1278269,1304325,1299466];
+  const TOT=EL.map((v,i)=>v+MI[i]+HI[i]);
+  const MC=[46954,55780,67806,82536,99186,109387,122212,137225,147378,160058,168645,181178,193814,202208];
+  const MCP=[0.7,0.9,1.1,1.4,1.7,1.9,2.2,2.5,2.8,3.0,3.2,3.5,3.8,4.0];
+  const LV={ // [pct, computed?]
+    el:[[1.1],[1.4],[1.8],[2.2],[2.8],[3.1],[3.4],[3.8],[4.0],[4.2],[4.2,1],[4.4],[4.7,1],[5.0]],
+    mi:[[0.5],[0.6],[0.7],[0.9],[1.0],[1.2],[1.4],[1.7],[2.0],[2.5],[2.9,1],[3.3],[3.6,1],[3.7]],
+    hi:[[0.2],[0.3],[0.4],[0.5],[0.6],[0.6],[0.7],[0.8],[0.9],[1.1],[1.3,1],[1.7],[2.1,1],[2.6]]
+  };
+
+  function frame(W,H,L,R,T,B){
+    const svg=el('svg',{viewBox:`0 0 ${W} ${H}`,'aria-hidden':'true'});
+    const iw=W-L-R, ih=H-T-B, slot=iw/YEARS.length;
+    const cx=i=>L+slot*i+slot/2;
+    YEARS.forEach((y,i)=>svg.appendChild(el('text',{x:cx(i),y:H-B+20,'text-anchor':'middle','font-size':12.5,fill:'var(--ink)','font-weight':600},y)));
+    return {svg,iw,ih,slot,cx,base:T+ih};
+  }
+  function grid(svg,ticks,yf,x1,x2,fmt,anchorX,anchor,color){
+    ticks.forEach(t=>{
+      if(x1!=null) svg.appendChild(el('line',{x1,x2,y1:yf(t),y2:yf(t),stroke:'var(--line)','stroke-width':1}));
+      svg.appendChild(el('text',{x:anchorX,y:yf(t)+4,'text-anchor':anchor,'font-size':11.5,fill:color||'var(--muted)'},fmt(t)));
+    });
+  }
+
+  /* ---------- 1. 외국인주민 ---------- */
+  (function(){
+    const W=900,H=360,L=56,R=14,T=46,B=46;
+    const f=frame(W,H,L,R,T,B), yMax=3000000, y=v=>T+f.ih-(v/yMax)*f.ih, bw=Math.min(40,f.slot*.62);
+    grid(f.svg,[0,1000000,2000000,3000000],y,L,W-R,t=>t?(t/10000)+'만':'0',L-8,'end');
+    RES.forEach(([v,p,b],i)=>{
+      const x=f.cx(i);
+      if(v==null){
+        f.svg.appendChild(el('rect',{x:x-bw/2,y:f.base-70,width:bw,height:70,fill:'none',stroke:'var(--muted)','stroke-dasharray':'4 3'}));
+        f.svg.appendChild(el('text',{x,y:f.base-40,'text-anchor':'middle','font-size':11,fill:'var(--muted)','font-weight':600},'미발표'));
+        return;
+      }
+      const old=b==='old';
+      f.svg.appendChild(el('rect',{x:x-bw/2,y:y(v),width:bw,height:f.base-y(v),rx:3,fill:'var(--res)','fill-opacity':old?.32:(i===12?1:.78),stroke:old?'var(--res)':'none','stroke-dasharray':old?'4 3':'0'}));
+      f.svg.appendChild(el('text',{x,y:y(v)-19,'text-anchor':'middle','font-size':11.5,'font-weight':700,fill:'var(--ink)','font-family':'IBM Plex Mono, monospace'},man(v)));
+      f.svg.appendChild(el('text',{x,y:y(v)-6,'text-anchor':'middle','font-size':10.5,'font-weight':600,fill:'var(--res)'},p.toFixed(1)+'%'));
+    });
+    f.svg.appendChild(el('line',{x1:L,x2:W-R,y1:f.base,y2:f.base,stroke:'var(--muted)'}));
+    const xb=(f.cx(2)+f.cx(3))/2;
+    f.svg.appendChild(el('line',{x1:xb,x2:xb,y1:T-14,y2:f.base,stroke:'var(--muted)','stroke-dasharray':'2 3'}));
+    f.svg.appendChild(el('text',{x:xb+6,y:T-4,'font-size':11,fill:'var(--muted)'},'← 1.1. 기준 | 11.1. 기준 →'));
+    f.svg.appendChild(el('text',{x:L-8,y:18,'text-anchor':'end','font-size':11,fill:'var(--muted)'},'(명)'));
+    document.getElementById('chart-res').appendChild(f.svg);
+  })();
+
+  /* ---------- 2. 복합: 초중고 막대 + 이주배경 선 ---------- */
+  (function(){
+    const W=1000,H=480,L=62,R=62,T=56,B=48;
+    const f=frame(W,H,L,R,T,B), yL=v=>T+f.ih-(v/8000000)*f.ih, yR=v=>T+f.ih-(v/250000)*f.ih, bw=Math.min(46,f.slot*.6);
+    grid(f.svg,[0,2000000,4000000,6000000,8000000],yL,L,W-R,t=>t?(t/10000)+'만':'0',L-8,'end');
+    grid(f.svg,[0,50000,100000,150000,200000,250000],yR,null,null,t=>t?(t/10000)+'만':'0',W-R+8,'start','var(--stu)');
+    TOT.forEach((v,i)=>{
+      const x=f.cx(i);
+      f.svg.appendChild(el('rect',{x:x-bw/2,y:yL(v),width:bw,height:f.base-yL(v),rx:3,fill:'var(--down)','fill-opacity':.55}));
+      f.svg.appendChild(el('text',{x,y:f.base-8,'text-anchor':'middle','font-size':11,'font-weight':600,fill:'var(--ink)','font-family':'IBM Plex Mono, monospace'},man0(v)));
+    });
+    let d='';MC.forEach((v,i)=>{d+=(i?'L':'M')+f.cx(i).toFixed(1)+' '+yR(v).toFixed(1)});
+    f.svg.appendChild(el('path',{d,fill:'none',stroke:'var(--stu)','stroke-width':3,'stroke-linejoin':'round'}));
+    MC.forEach((v,i)=>{
+      const x=f.cx(i),yy=yR(v),last=i===MC.length-1;
+      f.svg.appendChild(el('circle',{cx:x,cy:yy,r:last?6:4.5,fill:last?'var(--stu)':'var(--surface)',stroke:'var(--stu)','stroke-width':2.5}));
+      f.svg.appendChild(el('text',{x,y:yy-14,'text-anchor':'middle','font-size':11.5,'font-weight':700,fill:'var(--stu)','font-family':'IBM Plex Mono, monospace'},man(v)));
+      f.svg.appendChild(el('text',{x,y:yy-28,'text-anchor':'middle','font-size':10.5,'font-weight':600,fill:'var(--muted)'},MCP[i].toFixed(1)+'%'));
+    });
+    f.svg.appendChild(el('line',{x1:L,x2:W-R,y1:f.base,y2:f.base,stroke:'var(--muted)'}));
+    f.svg.appendChild(el('text',{x:L-8,y:20,'text-anchor':'end','font-size':11,fill:'var(--muted)'},'전체(명)'));
+    f.svg.appendChild(el('text',{x:W-6,y:20,'text-anchor':'end','font-size':11,fill:'var(--stu)'},'이주배경(명)'));
+    f.svg.appendChild(el('text',{x:L+6,y:20,'font-size':11,fill:'var(--muted)'},'선 위: 이주배경 학생 수 / 전체 학생 대비 비율'));
+    document.getElementById('chart-combo').appendChild(f.svg);
+  })();
+
+  /* ---------- 3. 이주배경 학생 막대 ---------- */
+  (function(){
+    const W=900,H=340,L=52,R=14,T=44,B=46;
+    const f=frame(W,H,L,R,T,B), yMax=250000, y=v=>T+f.ih-(v/yMax)*f.ih, bw=Math.min(40,f.slot*.62);
+    grid(f.svg,[0,50000,100000,150000,200000,250000],y,L,W-R,t=>t?(t/10000)+'만':'0',L-8,'end');
+    MC.forEach((v,i)=>{
+      const x=f.cx(i),last=i===MC.length-1;
+      f.svg.appendChild(el('rect',{x:x-bw/2,y:y(v),width:bw,height:f.base-y(v),rx:3,fill:'var(--stu)','fill-opacity':last?1:.78}));
+      f.svg.appendChild(el('text',{x,y:y(v)-19,'text-anchor':'middle','font-size':11.5,'font-weight':700,fill:'var(--ink)','font-family':'IBM Plex Mono, monospace'},man(v)));
+      f.svg.appendChild(el('text',{x,y:y(v)-6,'text-anchor':'middle','font-size':10.5,'font-weight':600,fill:'var(--stu)'},MCP[i].toFixed(1)+'%'));
+    });
+    f.svg.appendChild(el('line',{x1:L,x2:W-R,y1:f.base,y2:f.base,stroke:'var(--muted)'}));
+    f.svg.appendChild(el('text',{x:L-8,y:18,'text-anchor':'end','font-size':11,fill:'var(--muted)'},'(명)'));
+    document.getElementById('chart-stu').appendChild(f.svg);
+
+    const tb=document.getElementById('stu-table');
+    MC.forEach((v,i)=>{
+      const prev=i?MC[i-1]:null,diff=prev!=null?v-prev:null;
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${YEARS[i]}</td><td>${TOT[i].toLocaleString('ko-KR')}</td><td>${v.toLocaleString('ko-KR')}</td><td>${diff!=null?'+'+diff.toLocaleString('ko-KR'):'—'}</td><td>${diff!=null?'+'+(diff/prev*100).toFixed(1)+'%':'—'}</td><td>${MCP[i].toFixed(1)}%</td>`;
+      tb.appendChild(tr);
+    });
+  })();
+
+  /* ---------- 4. 학교급별 선 ---------- */
+  (function(){
+    const W=1000,H=460,L=52,R=70,T=36,B=48;
+    const f=frame(W,H,L,R,T,B), y=v=>T+f.ih-((v+0.45)/6.45)*f.ih;
+    grid(f.svg,[0,1,2,3,4,5,6],y,L,W-R,t=>t+'%',L-8,'end');
+    f.base=y(0);
+    const series=[['el','var(--el)','초등학교',-12],['mi','var(--mid)','중학교',-12],['hi','var(--hi)','고등학교',18]];
+    series.forEach(([k,c,name,dy])=>{
+      const s=LV[k];let d='';
+      s.forEach(([p],i)=>{d+=(i?'L':'M')+f.cx(i).toFixed(1)+' '+y(p).toFixed(1)});
+      f.svg.appendChild(el('path',{d,fill:'none',stroke:c,'stroke-width':3,'stroke-linejoin':'round'}));
+      s.forEach(([p,comp],i)=>{
+        const x=f.cx(i),yy=y(p),last=i===s.length-1;
+        f.svg.appendChild(el('circle',{cx:x,cy:yy,r:last?6:4.5,fill:comp?'var(--surface)':c,stroke:c,'stroke-width':2.5}));
+        f.svg.appendChild(el('text',{x,y:yy+dy,'text-anchor':'middle','font-size':11,'font-weight':700,fill:c,'font-family':'IBM Plex Mono, monospace'},p.toFixed(1)));
+      });
+      const lp=s[s.length-1][0];
+      f.svg.appendChild(el('text',{x:f.cx(s.length-1)+14,y:y(lp)+(k==='hi'?8:4),'font-size':12.5,'font-weight':700,fill:c},name));
+    });
+    f.svg.appendChild(el('line',{x1:L,x2:W-R,y1:f.base,y2:f.base,stroke:'var(--muted)'}));
+    document.getElementById('chart-lv').appendChild(f.svg);
+
+    const tb=document.getElementById('lv-table');
+    YEARS.forEach((yr,i)=>{
+      const cell=([p,c])=>p.toFixed(1)+'%'+(c?'<span class="c">계산</span>':'');
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${yr}</td><td>${cell(LV.el[i])}</td><td>${cell(LV.mi[i])}</td><td>${cell(LV.hi[i])}</td>`;
+      tb.appendChild(tr);
+    });
+  })();
+})();
+</script>
+</body>
+</html>
